@@ -1,5 +1,3 @@
-
-// function init() {
 // create a variable for the selector and assign it to the id = selDataset
     let dropdownMenu = d3.select("#selDataset");
 //Use the D3 library to read in samples.json from the URL
@@ -22,39 +20,55 @@ function optionChanged(newsample){
 }
 function buildcharts(sample_id){
 
-
     // Fetch the JSON data and console log it
     d3.json(url).then(function(data) {
-// Extract 'sample' key information only 
+// Extract  information from samples key
         let samples = data.samples;
         console.log("Original sample data:", samples);
         let sample=samples.filter(element=>element.id==sample_id)[0]
-
         var sample_values=sample.sample_values;
         var otu_ids = sample.otu_ids;
         var otu_labels = sample.otu_labels;
         
-// Testing plot for 1 set of data
+// Create interative bar chart
         let trace1 = {
             x: sample_values.slice(0, 10).reverse(),
             y: otu_ids.slice(0, 10).map(otu_id => "OTU "+ otu_id).reverse(),
             text: otu_labels.slice(0,10).reverse(),
-            name: "Test",
+            name: "Top ten OTUs per Individual",
             type: "bar",
             orientation: "h"
           };
-        let data1 = [trace1]
+        let data1 = [trace1];
         let layout = {
-            title: "Test"
-            // margin: {
-            //   l: 100,
-            //   r: 100,
-            //   t: 100,
-            //   b: 100}
+            title: "Bar chart: Top Ten OTUs per Individual"
             };
-          
-          // Render the plot to the div tag with id "plot"
-          Plotly.newPlot("bar", data1, layout);
+            Plotly.newPlot("bar", data1, layout);
 
-});
-}
+  // Create interative bubble chart
+        let trace2 = {
+                x: otu_ids,
+                y: sample_values,
+                type: "scatter",
+                mode: "markers",
+                text: otu_labels,
+                marker: {
+                    size:sample_values,
+                    color:otu_ids,
+                    // various colorscales can be found : https://plotly.com/javascript/colorscales/#bluered-colorscale
+                    colorscale: 'Bluered'
+                },
+                };
+        let data2 = [trace2]
+        let layout2 = {
+                title: "Bubble Plot: Frequency of all OTUs per individual", 
+                xaxis: {
+                    title:"OTU ID"
+                }
+                };
+                Plotly.newPlot("bubble", data2, layout2);
+              
+        
+})}
+        ;
+
